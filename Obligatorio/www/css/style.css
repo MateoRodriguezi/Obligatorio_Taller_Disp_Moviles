@@ -1,0 +1,45 @@
+ion-menu {
+  --ion-background-color: #ffffff; /* Cambiar color de fondo */
+  --ion-text-color: #282c34; /* Cambiar color de texto */
+}
+
+ion-menu ion-content {
+  background-color: #ffffff; /* Cambiar color de fondo del contenido */
+  color: #282c34; /* Cambiar color de texto del contenido */
+}
+
+ion-toolbar {
+  --background: #282c34; /* Cambiar color de fondo de la barra de herramientas */
+  --ion-color-base: #ffffff; /* Cambiar color base para texto */
+}
+
+ion-title {
+  color: #ffffff; /* Cambiar color del título */
+}
+
+ion-content {
+  --background: #f0f2f5; /* Cambiar color de fondo del contenido principal */
+  --color: #282c34; /* Cambiar color del texto del contenido principal */
+}
+
+ion-menu-button {
+  --color: #ffffff; /* Cambiar color del icono de menú */
+  --background: transparent; /* Hacer el fondo transparente */
+}
+
+ion-menu-button::part(icon) {
+  font-size: 1.5rem; /* Ajustar tamaño del icono */
+}
+
+/* Estilo personalizado para el título */
+.custom-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff; /* Cambiar color del texto del título */
+}
+
+/* Estilo personalizado para el texto */
+.custom-text {
+  font-size: 18px;
+  color: #333333; /* Cambiar color del texto del contenido principal */
+}
