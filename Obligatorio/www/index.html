@@ -91,7 +91,6 @@
 
         <!--  PANTALLAS -->
 
-
         <page-home class="ion-page" id="pantalla-home">
             <ion-header>
                 <ion-toolbar>
@@ -101,14 +100,17 @@
                     </ion-buttons>
                 </ion-toolbar>
             </ion-header>
+
             <ion-content class="ion-padding" fullscreen>
+                <p id="mensajeLoginExitoso" style="color: green;"></p>
                 <ion-img src="./img/ejercicio.jpg" alt="Persona activa y saludable"></ion-img>
                 <p class="custom-text">Empezá hoy a escribir el capítulo más saludable de tu vida</p>
+                <p id="mensajeLogueo"></p>
             </ion-content>
         </page-home>
 
 
-        <page-login class="ion-page" id="pantalla-login">
+        <page-login class=" ion-page" id="pantalla-login">
             <ion-header>
                 <ion-toolbar>
                     <ion-title>Login</ion-title>
@@ -120,15 +122,16 @@
             <ion-content class="ion-padding" fullscreen>
 
                 <ion-item>
-                    <ion-label position="floating">Correo electrónico</ion-label>
-                    <ion-input type="email" placeholder="Ingrese su correo electrónico"
-                        id="txtLoginUsuario"></ion-input>
+                    <ion-label position="floating">Usuario</ion-label>
+                    <ion-input type="email" placeholder="Ingrese su usuario" id="txtLoginUsuario"></ion-input>
                 </ion-item>
 
                 <ion-item>
                     <ion-label position="floating">Contraseña</ion-label>
                     <ion-input type="password" placeholder="Ingrese su contraseña" id="txtPasswordUsuario"></ion-input>
                 </ion-item>
+
+                <p id="mensajeError" style="color: red;"></p>
 
                 <ion-button expand="block" id="btnHacerLogin">Iniciar sesión</ion-button>
             </ion-content>
@@ -155,13 +158,15 @@
                 </ion-item>
                 <ion-item>
                     <ion-label position="floating">País de residencia</ion-label>
-                    <ion-input type="text" name="pais" id="txtRegistroPais" required></ion-input>
+                    <ion-select type="text" name="pais" id="txtRegistroPais" required></ion-select>
                 </ion-item>
                 <ion-item>
-                    <ion-label position="floating">Calorías diarias recomendadas</ion-label>
+                    <ion-label position="floating">Calorías diarias</ion-label>
                     <ion-input type="number" name="calorias" id="txtRegistroCalorias" required></ion-input>
                 </ion-item>
                 <ion-button expand="block" id="btnRegistrarUsuario">Registrar Usuario</ion-button>
+                <p id="mensajeRegistroExitoso" style="color: green;"></p>
+                <p id="mensajeErrorRegistro" style="color: red;"></p>
             </ion-content>
         </page-registrar>
 
@@ -177,9 +182,8 @@
             </ion-header>
             <ion-content class="ion-padding" fullscreen>
                 <ion-item>
-                    <ion-label position="floating">ID del Alimento (1-30)</ion-label>
-                    <ion-input type="number" name="txtIdAlimento" id="txtIdAlimento" min="1" max="30"
-                        required></ion-input>
+                    <ion-label position="floating">Seleccione alimento</ion-label>
+                    <ion-select type="text" name="pais" id="txtIdAlimento" required></ion-select>
                 </ion-item>
                 <ion-item>
                     <ion-label position="floating">Cantidad</ion-label>
@@ -191,6 +195,8 @@
                         max="{{ getToday() | date: 'yyyy-MM-dd' }}" display-format="DD/MM/YYYY" required></ion-input>
                 </ion-item>
                 <ion-button expand="block" id="btnRegistrarAlimento">Registrar Alimento</ion-button>
+                <p id="mensajeRegistroAlimentoExitoso" style="color: green;"></p>
+                <p id="mensajeErrorAlimentoRegistro" style="color: red;"></p>
             </ion-content>
         </page-registrar-comida>
 
