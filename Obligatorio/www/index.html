@@ -25,6 +25,7 @@
             <ion-route url="/registrarU" component="page-registrar"> </ion-route>
             <ion-route url="/registrarC" component="page-registrar-comida"> </ion-route>
             <ion-route url="/listar" component="page-listar-comida"> </ion-route>
+            <ion-route url="/informeC" component="page-informe-calorias"> </ion-route>
         </ion-router>
         <ion-nav></ion-nav>
 
@@ -66,7 +67,7 @@
                         <ion-label>Listar Comidas</ion-label>
                     </ion-item>
 
-                    <ion-item button id="btnInformar" href="/informar" onclick="cerrarMenu()">
+                    <ion-item button id="btnInformar" href="/informeC" onclick="cerrarMenu()">
                         <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
                         <ion-label>Informe de Calorías</ion-label>
                     </ion-item>
@@ -212,10 +213,50 @@
             </ion-header>
             <ion-content class="ion-padding" fullscreen>
                 <ion-list id="lista-comidas">
+                    <!-- Aquí se mostrarán los registros -->
                 </ion-list>
-                <p id="mensajeSinRegistros" style="color: red; display: none;">No tienes registros.</p>
+                <p id="mensajeSinRegistros" style="color: red; display: none; text-align: center;">No tienes registros.
+                </p>
+                <div style="margin-top: 20px;">
+                    <ion-item>
+                        <ion-label position="stacked" style="margin-bottom: 5px;">Desde:</ion-label>
+                        <ion-input type="date" id="fechaInicio"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label position="stacked" style="margin-bottom: 5px;">Hasta:</ion-label>
+                        <ion-input type="date" id="fechaFin"></ion-input>
+                    </ion-item>
+                    <ion-button expand="block" id="btnFiltrar" style="margin-top: 20px;">Filtrar</ion-button>
+                </div>
             </ion-content>
         </page-listar-comidas>
+
+        <page-informe-calorias class="ion-page" id="pantalla-informeCalorias">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
+                    <ion-title>Informe de Calorías</ion-title>
+                </ion-toolbar>
+            </ion-header>
+
+            <ion-content class="ion-padding" fullscreen>
+                <div class="calorias-container">
+                    <div class="calorias-card">
+                        <ion-icon name="flame-outline" class="calorias-icon"></ion-icon>
+                        <ion-label> Total Calorías Ingeridas:</ion-label>
+                        <ion-label id="totalCalorias" class="calorias-value"></ion-label>
+                    </div>
+                    <div class="calorias-card">
+                        <ion-icon name="today-outline" class="calorias-icon"></ion-icon>
+                        <ion-label> Calorías Registradas Hoy:</ion-label>
+                        <ion-label id="caloriasDiarias" class="calorias-value"></ion-label>
+                    </div>
+                </div>
+            </ion-content>
+        </page-informe-calorias>
+
 
     </ion-app>
     <script src="js/codigo.js"></script>

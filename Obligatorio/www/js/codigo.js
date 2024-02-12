@@ -1,3 +1,7 @@
+document
+  .getElementById("btnFiltrar")
+  .addEventListener("click", filtrarRegistrosPorFecha);
+
 const MENU = document.querySelector("#menu");
 const ROUTER = document.querySelector("#ruteo");
 const HOME = document.querySelector("#pantalla-home");
@@ -5,6 +9,7 @@ const LOGIN = document.querySelector("#pantalla-login");
 const REGISTROU = document.querySelector("#pantalla-registroU");
 const REGISTROC = document.querySelector("#pantalla-registroC");
 const LISTADO = document.querySelector("#pantalla-listarC");
+const INFORME = document.querySelector("#pantalla-informeCalorias");
 const URLBASE = "https://calcount.develotion.com/";
 
 let registrosArray = [];
@@ -40,6 +45,12 @@ function eventos() {
   document
     .querySelector("#btnRegistrarAlimento")
     .addEventListener("click", previaRegistroAlimento);
+  document
+    .querySelector("#btnInformar")
+    .addEventListener("click", calcularCalorias);
+  document
+    .querySelector("#btnInformar")
+    .addEventListener("click", obtenerAlimentos);
 }
 
 function navegar(evt) {
@@ -52,6 +63,7 @@ function navegar(evt) {
     LISTADO.style.display = "block";
     obtenerRegistros();
   }
+  if (evt.detail.to == "/informeC") INFORME.style.display = "block";
 }
 
 function ocultarPantallas() {
@@ -60,6 +72,7 @@ function ocultarPantallas() {
   REGISTROU.style.display = "none";
   REGISTROC.style.display = "none";
   LISTADO.style.display = "none";
+  INFORME.style.display = "none";
 }
 
 function ocultarBotones() {
@@ -443,4 +456,60 @@ function mostrarMensajeTemporal(mensaje, color) {
       document.body.removeChild(mensajeElemento);
     }, 300);
   }, 2000);
+}
+
+function filtrarRegistrosPorFecha() {
+  const fechaInicio = new Date(document.getElementById("fechaInicio").value);
+  const fechaFin = new Date(document.getElementById("fechaFin").value);
+
+  const registrosFiltrados = [];
+
+  for (let i = 0; i < registrosArray.length; i++) {
+    const fechaRegistro = new Date(registrosArray[i].fecha);
+    if (fechaRegistro >= fechaInicio && fechaRegistro <= fechaFin) {
+      registrosFiltrados.push(registrosArray[i]);
+    }
+  }
+
+  mostrarRegistros(registrosFiltrados);
+}
+
+function calcularCalorias() {
+  let totalCalorias = 0;
+  let caloriasHoy = 0;
+  const hoy = new Date().toISOString().split("T")[0];
+
+  for (let i = 0; i < registrosArray.length; i++) {
+    for (let j = 0; j < listaAlimentos.length; j++) {
+      if (registrosArray[i].idAlimento === listaAlimentos[j].id) {
+        const cantidad = registrosArray[i].cantidad;
+        const caloriasPorAlimento = listaAlimentos[j].calorias * cantidad;
+        totalCalorias += caloriasPorAlimento;
+
+        if (registrosArray[i].fecha === hoy) {
+          caloriasHoy += caloriasPorAlimento;
+        }
+        break;
+      }
+    }
+  }
+
+  document.getElementById("totalCalorias").textContent = totalCalorias;
+  document.getElementById("caloriasDiarias").textContent = caloriasHoy;
+
+  const caloriasDiariasPrevistas = parseInt(
+    localStorage.getItem("caloriasDiarias")
+  );
+
+  const porcentaje = (caloriasHoy / caloriasDiariasPrevistas) * 100;
+  let colorTexto = "";
+  if (porcentaje > 100) {
+    colorTexto = "red";
+  } else if (porcentaje >= 90 && porcentaje <= 100) {
+    colorTexto = "orange";
+  } else {
+    colorTexto = "green";
+  }
+
+  document.getElementById("caloriasDiarias").style.color = colorTexto;
 }

@@ -60,3 +60,30 @@ ion-menu-button::part(icon) {
 .mensaje-temporal.mostrar {
   opacity: 1;
 }
+
+.calorias-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.calorias-card {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0 10px; /* Espacio horizontal entre los cuadros */
+}
+
+.calorias-icon {
+  font-size: 40px;
+  color: #ff6347; /* Color naranja para el ícono */
+}
+
+.calorias-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
