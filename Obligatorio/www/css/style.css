@@ -1,45 +1,62 @@
 ion-menu {
-  --ion-background-color: #ffffff; /* Cambiar color de fondo */
-  --ion-text-color: #282c34; /* Cambiar color de texto */
+  --ion-background-color: #ffffff;
+  --ion-text-color: #282c34;
 }
 
 ion-menu ion-content {
-  background-color: #ffffff; /* Cambiar color de fondo del contenido */
-  color: #282c34; /* Cambiar color de texto del contenido */
+  background-color: #ffffff;
+  color: #282c34;
 }
 
 ion-toolbar {
-  --background: #282c34; /* Cambiar color de fondo de la barra de herramientas */
-  --ion-color-base: #ffffff; /* Cambiar color base para texto */
+  --background: #282c34;
+  --ion-color-base: #ffffff;
 }
 
 ion-title {
-  color: #ffffff; /* Cambiar color del título */
+  color: #ffffff;
 }
 
 ion-content {
-  --background: #f0f2f5; /* Cambiar color de fondo del contenido principal */
-  --color: #282c34; /* Cambiar color del texto del contenido principal */
+  --background: #f0f2f5;
+  --color: #282c34;
 }
 
 ion-menu-button {
-  --color: #ffffff; /* Cambiar color del icono de menú */
-  --background: transparent; /* Hacer el fondo transparente */
+  --color: #ffffff;
+  --background: transparent;
 }
 
 ion-menu-button::part(icon) {
-  font-size: 1.5rem; /* Ajustar tamaño del icono */
+  font-size: 1.5rem;
 }
 
-/* Estilo personalizado para el título */
 .custom-title {
   font-size: 24px;
   font-weight: bold;
-  color: #ffffff; /* Cambiar color del texto del título */
+  color: #ffffff;
 }
 
-/* Estilo personalizado para el texto */
 .custom-text {
   font-size: 18px;
-  color: #333333; /* Cambiar color del texto del contenido principal */
+  color: #333333;
+}
+
+.mensaje-temporal {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.mensaje-temporal.mostrar {
+  opacity: 1;
 }

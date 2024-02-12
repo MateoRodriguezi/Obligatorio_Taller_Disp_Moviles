@@ -4,7 +4,11 @@ const HOME = document.querySelector("#pantalla-home");
 const LOGIN = document.querySelector("#pantalla-login");
 const REGISTROU = document.querySelector("#pantalla-registroU");
 const REGISTROC = document.querySelector("#pantalla-registroC");
+const LISTADO = document.querySelector("#pantalla-listarC");
 const URLBASE = "https://calcount.develotion.com/";
+
+let registrosArray = [];
+let listaAlimentos = [];
 
 inicio();
 
@@ -16,6 +20,7 @@ function inicio() {
   chequearSession();
   eventos();
   obtenerPaises();
+  obtenerAlimentos();
 }
 
 function eventos() {
@@ -43,6 +48,10 @@ function navegar(evt) {
   if (evt.detail.to == "/login") LOGIN.style.display = "block";
   if (evt.detail.to == "/registrarU") REGISTROU.style.display = "block";
   if (evt.detail.to == "/registrarC") REGISTROC.style.display = "block";
+  if (evt.detail.to == "/listar") {
+    LISTADO.style.display = "block";
+    obtenerRegistros();
+  }
 }
 
 function ocultarPantallas() {
@@ -50,6 +59,7 @@ function ocultarPantallas() {
   LOGIN.style.display = "none";
   REGISTROU.style.display = "none";
   REGISTROC.style.display = "none";
+  LISTADO.style.display = "none";
 }
 
 function ocultarBotones() {
@@ -227,47 +237,51 @@ function obtenerPaises() {
 }
 
 function obtenerAlimentos() {
-  apiKey = localStorage.getItem("apikey");
-  idUser = localStorage.getItem("idUsuario");
+  if (listaAlimentos.length === 0) {
+    apiKey = localStorage.getItem("apikey");
+    idUser = localStorage.getItem("idUsuario");
 
-  fetch(`${URLBASE}alimentos.php`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: apiKey,
-      iduser: idUser,
-    },
-  })
-    .then(function (response) {
-      return response.json();
+    fetch(`${URLBASE}alimentos.php`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: apiKey,
+        iduser: idUser,
+      },
     })
-    .then(function (respuesta) {
-      if (respuesta && respuesta.alimentos) {
-        const selectAlimento = document.getElementById("txtIdAlimento");
-        respuesta.alimentos.forEach(function (alimento) {
-          const option = document.createElement("ion-select-option");
-          option.value = alimento.id;
-          option.textContent = alimento.nombre;
-          selectAlimento.appendChild(option);
-        });
-      } else {
-        console.error("Error al obtener los alimentos");
-      }
-    })
-    .catch(function (error) {
-      console.error("Error al obtener los alimentos:", error);
-    });
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (respuesta) {
+        if (respuesta && respuesta.alimentos) {
+          const selectAlimento = document.getElementById("txtIdAlimento");
+          respuesta.alimentos.forEach(function (alimento) {
+            const option = document.createElement("ion-select-option");
+            option.value = alimento.id;
+            option.textContent = alimento.nombre;
+            selectAlimento.appendChild(option);
+          });
+          listaAlimentos = respuesta.alimentos;
+          console.log(listaAlimentos);
+        } else {
+          console.error("Error al obtener los alimentos");
+        }
+      })
+      .catch(function (error) {
+        console.error("Error al obtener los alimentos:", error);
+      });
+  }
 }
 
 function previaRegistroAlimento() {
-  let idUser = localStorage.getItem("idUsuario");
+  let idUsuario = localStorage.getItem("idUsuario");
   let id = document.querySelector("#txtIdAlimento").value;
   let cantidad = document.querySelector("#txtCantidadAlimento").value;
   let fecha = document.querySelector("#txtFechaAlimento").value;
 
   let nuevoAlimentoRegistrado = new Object();
-  nuevoAlimentoRegistrado.id = id;
-  nuevoAlimentoRegistrado.idUser = idUser;
+  nuevoAlimentoRegistrado.idAlimento = id;
+  nuevoAlimentoRegistrado.idUsuario = idUsuario;
   nuevoAlimentoRegistrado.cantidad = cantidad;
   nuevoAlimentoRegistrado.fecha = fecha;
 
@@ -307,4 +321,126 @@ function hacerRegistroAlimento(nuevoAlimentoRegistrado) {
     .catch(function (error) {
       console.log(error);
     });
+}
+
+function obtenerRegistros() {
+  const apiKey = localStorage.getItem("apikey");
+  const idUsuario = localStorage.getItem("idUsuario");
+
+  fetch(`${URLBASE}registros.php?idUsuario=${idUsuario}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: apiKey,
+      iduser: idUsuario,
+    },
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      console.log(data);
+      if (data && data.registros) {
+        registrosArray = data.registros;
+        mostrarRegistros(registrosArray);
+        console.log(registrosArray);
+      } else {
+        console.error("Error al obtener los registros");
+      }
+    })
+    .catch(function (error) {
+      console.error("Error al obtener los registros:", error);
+    });
+}
+
+function mostrarRegistros(registros) {
+  const listaComidas = document.getElementById("lista-comidas");
+  listaComidas.innerHTML = "";
+
+  if (registros.length === 0) {
+    document.getElementById("mensajeSinRegistros").style.display = "block";
+    return;
+  } else {
+    document.getElementById("mensajeSinRegistros").style.display = "none";
+  }
+
+  registros.forEach(function (registro) {
+    const item = document.createElement("ion-item");
+
+    let alimentoEncontrado = null;
+    for (let i = 0; i < listaAlimentos.length; i++) {
+      if (listaAlimentos[i].id === registro.idAlimento) {
+        alimentoEncontrado = listaAlimentos[i];
+        break;
+      }
+    }
+
+    if (alimentoEncontrado) {
+      const imagen = document.createElement("ion-img");
+      imagen.src = `${URLBASE}imgs/${alimentoEncontrado.imagen}.png`;
+      imagen.slot = "start";
+      item.appendChild(imagen);
+
+      const texto = document.createElement("ion-label");
+      texto.textContent = `${alimentoEncontrado.nombre} - ${alimentoEncontrado.calorias} calorías`;
+      item.appendChild(texto);
+    } else {
+      console.error(`No se encontró el alimento con id ${registro.idAlimento}`);
+    }
+
+    const botonEliminar = document.createElement("ion-button");
+    botonEliminar.slot = "end";
+    botonEliminar.textContent = "Eliminar";
+    botonEliminar.addEventListener("click", function () {
+      eliminarRegistro(registro.id);
+    });
+    item.appendChild(botonEliminar);
+    listaComidas.appendChild(item);
+  });
+}
+
+function eliminarRegistro(idRegistro) {
+  const apiKey = localStorage.getItem("apikey");
+  const idUsuario = localStorage.getItem("idUsuario");
+
+  fetch(`${URLBASE}registros.php?idRegistro=${idRegistro}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: apiKey,
+      iduser: idUsuario,
+    },
+  })
+    .then(function (response) {
+      if (response.ok) {
+        console.log("Registro eliminado correctamente");
+        mostrarMensajeTemporal("Registro eliminado con éxito", "red");
+        obtenerRegistros();
+      } else {
+        console.error("Error al eliminar el registro");
+      }
+    })
+    .catch(function (error) {
+      console.error("Error al eliminar el registro:", error);
+    });
+}
+
+function mostrarMensajeTemporal(mensaje, color) {
+  const mensajeElemento = document.createElement("div");
+  mensajeElemento.textContent = mensaje;
+  mensajeElemento.classList.add("mensaje-temporal");
+  mensajeElemento.style.backgroundColor = color;
+
+  document.body.appendChild(mensajeElemento);
+
+  setTimeout(function () {
+    mensajeElemento.classList.add("mostrar");
+  }, 100);
+
+  setTimeout(function () {
+    mensajeElemento.classList.remove("mostrar");
+    setTimeout(function () {
+      document.body.removeChild(mensajeElemento);
+    }, 300);
+  }, 2000);
 }

@@ -24,6 +24,7 @@
             <ion-route url="/login" component="page-login"> </ion-route>
             <ion-route url="/registrarU" component="page-registrar"> </ion-route>
             <ion-route url="/registrarC" component="page-registrar-comida"> </ion-route>
+            <ion-route url="/listar" component="page-listar-comida"> </ion-route>
         </ion-router>
         <ion-nav></ion-nav>
 
@@ -183,11 +184,11 @@
             <ion-content class="ion-padding" fullscreen>
                 <ion-item>
                     <ion-label position="floating">Seleccione alimento</ion-label>
-                    <ion-select type="text" name="pais" id="txtIdAlimento" required></ion-select>
+                    <ion-select name="pais" id="txtIdAlimento" required></ion-select>
                 </ion-item>
                 <ion-item>
                     <ion-label position="floating">Cantidad</ion-label>
-                    <ion-input type="text" name="txtCantidadAlimento" id="txtCantidadAlimento" required></ion-input>
+                    <ion-input type="number" name="txtCantidadAlimento" id="txtCantidadAlimento" required></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label position="floating"></ion-label>
@@ -200,10 +201,21 @@
             </ion-content>
         </page-registrar-comida>
 
-
-
-
-
+        <page-listar-comidas class="ion-page" id="pantalla-listarC">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title>Listado de Comidas</ion-title>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding" fullscreen>
+                <ion-list id="lista-comidas">
+                </ion-list>
+                <p id="mensajeSinRegistros" style="color: red; display: none;">No tienes registros.</p>
+            </ion-content>
+        </page-listar-comidas>
 
     </ion-app>
     <script src="js/codigo.js"></script>
