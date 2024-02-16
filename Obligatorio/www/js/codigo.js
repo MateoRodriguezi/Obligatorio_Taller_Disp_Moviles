@@ -10,10 +10,19 @@ const REGISTROU = document.querySelector("#pantalla-registroU");
 const REGISTROC = document.querySelector("#pantalla-registroC");
 const LISTADO = document.querySelector("#pantalla-listarC");
 const INFORME = document.querySelector("#pantalla-informeCalorias");
+const MAPA = document.querySelector("#pantalla-mapa");
 const URLBASE = "https://calcount.develotion.com/";
 
 let registrosArray = [];
 let listaAlimentos = [];
+let paises = [];
+let arrayUsuariosPorPais = [];
+
+let miLatitud;
+let miLongitud;
+let map;
+let popup;
+let marker;
 
 inicio();
 
@@ -26,6 +35,8 @@ function inicio() {
   eventos();
   obtenerPaises();
   obtenerAlimentos();
+  getMiPosicion();
+  usuariosPorPais();
 }
 
 function eventos() {
@@ -51,6 +62,11 @@ function eventos() {
   document
     .querySelector("#btnInformar")
     .addEventListener("click", obtenerAlimentos);
+
+  document.querySelector("#btnMapa").addEventListener("click", armarMapa);
+  document
+    .querySelector("#searchButton")
+    .addEventListener("click", paisesConMasUsuarios);
 }
 
 function navegar(evt) {
@@ -64,6 +80,7 @@ function navegar(evt) {
     obtenerRegistros();
   }
   if (evt.detail.to == "/informeC") INFORME.style.display = "block";
+  if (evt.detail.to == "/mapa") MAPA.style.display = "block";
 }
 
 function ocultarPantallas() {
@@ -73,6 +90,7 @@ function ocultarPantallas() {
   REGISTROC.style.display = "none";
   LISTADO.style.display = "none";
   INFORME.style.display = "none";
+  MAPA.style.display = "none";
 }
 
 function ocultarBotones() {
@@ -233,6 +251,7 @@ function obtenerPaises() {
     .then(function (respuesta) {
       console.log(respuesta);
       if (respuesta && respuesta.paises) {
+        paises = respuesta.paises;
         const selectPais = document.getElementById("txtRegistroPais");
         respuesta.paises.forEach(function (pais) {
           const option = document.createElement("ion-select-option");
@@ -356,7 +375,6 @@ function obtenerRegistros() {
       if (data && data.registros) {
         registrosArray = data.registros;
         mostrarRegistros(registrosArray);
-        console.log(registrosArray);
       } else {
         console.error("Error al obtener los registros");
       }
@@ -426,11 +444,10 @@ function eliminarRegistro(idRegistro) {
   })
     .then(function (response) {
       if (response.ok) {
-        console.log("Registro eliminado correctamente");
         mostrarMensajeTemporal("Registro eliminado con éxito", "red");
         obtenerRegistros();
       } else {
-        console.error("Error al eliminar el registro");
+        mostrarMensajeTemporal("Error al eliminar el registro");
       }
     })
     .catch(function (error) {
@@ -512,4 +529,97 @@ function calcularCalorias() {
   }
 
   document.getElementById("caloriasDiarias").style.color = colorTexto;
+}
+
+function armarMapa(latitud, longitud) {
+  if (map) {
+    map.remove();
+  }
+
+  map = L.map("map").setView([latitud, longitud], 16);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+
+  L.marker([latitud, longitud])
+    .addTo(map)
+    .bindPopup("Usted está aquí.")
+    .openPopup();
+}
+
+function getMiPosicion() {
+  navigator.geolocation.getCurrentPosition(miUbicacion, errorEnGeo);
+}
+
+function miUbicacion(position) {
+  miLatitud = position.coords.latitude;
+  miLongitud = position.coords.longitude;
+  armarMapa(miLatitud, miLongitud);
+}
+
+function errorEnGeo(error) {
+  console.log("Error en la geolocalización:", error.message);
+}
+
+function usuariosPorPais() {
+  const apiKey = localStorage.getItem("apikey");
+  const idUsuario = localStorage.getItem("idUsuario");
+
+  const headers = {
+    "Content-Type": "application/json",
+    apikey: apiKey,
+    iduser: idUsuario,
+  };
+
+  fetch(`${URLBASE}usuariosPorPais.php`, {
+    method: "GET",
+    headers: headers,
+  })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("No se pudo obtener la información.");
+      }
+      return response.json();
+    })
+    .then(function (data) {
+      arrayUsuariosPorPais = data.paises;
+      console.log(arrayUsuariosPorPais);
+    })
+    .catch(function (error) {
+      console.error("Error al obtener los datos:", error);
+    });
+}
+
+function paisesConMasUsuarios() {
+  const cantidadUsuarios = parseInt(
+    document.querySelector("#userRecordsInput").value
+  );
+  console.log("Cantidad de usuarios ingresada:", cantidadUsuarios);
+
+  if (isNaN(cantidadUsuarios)) {
+    alert("Por favor, ingrese un número válido de usuarios.");
+    return;
+  }
+
+  console.log("Array de usuarios por país:", arrayUsuariosPorPais);
+
+  arrayUsuariosPorPais.forEach(function (paisUsuario) {
+    if (paisUsuario.cantidadDeUsuarios > cantidadUsuarios) {
+      const paisInfo = paises.find((pais) => pais.id === paisUsuario.id);
+      if (paisInfo) {
+        agregarMarcador(paisInfo);
+      }
+    }
+  });
+}
+
+function agregarMarcador(pais) {
+  L.marker([pais.latitude, pais.longitude])
+    .addTo(map)
+    .bindPopup(
+      `<b>${pais.name}: <em>País con más registros que el ingresado</em>`
+    );
 }

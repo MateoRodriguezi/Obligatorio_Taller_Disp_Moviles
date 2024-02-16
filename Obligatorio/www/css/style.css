@@ -73,7 +73,7 @@ ion-menu-button::part(icon) {
   border-radius: 8px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(18, 11, 11, 0.1);
   margin: 0 10px; /* Espacio horizontal entre los cuadros */
 }
 
@@ -86,4 +86,9 @@ ion-menu-button::part(icon) {
   font-size: 24px;
   font-weight: bold;
   margin-top: 10px;
+}
+
+#map {
+  height: 90%;
+  width: 100%;
 }
