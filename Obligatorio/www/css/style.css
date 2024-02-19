@@ -74,12 +74,12 @@ ion-menu-button::part(icon) {
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(18, 11, 11, 0.1);
-  margin: 0 10px; /* Espacio horizontal entre los cuadros */
+  margin: 0 10px;
 }
 
 .calorias-icon {
   font-size: 40px;
-  color: #ff6347; /* Color naranja para el ícono */
+  color: #ff6347;
 }
 
 .calorias-value {
