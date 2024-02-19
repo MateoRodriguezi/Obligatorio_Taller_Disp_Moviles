@@ -18,9 +18,10 @@ let listaAlimentos = [];
 let paises = [];
 let arrayUsuariosPorPais = [];
 
+let map;
+let mapaInicializado = false;
 let miLatitud;
 let miLongitud;
-let map;
 let popup;
 let marker;
 
@@ -35,8 +36,8 @@ function inicio() {
   eventos();
   obtenerPaises();
   obtenerAlimentos();
-  getMiPosicion();
   usuariosPorPais();
+  armarMapa();
 }
 
 function eventos() {
@@ -62,8 +63,6 @@ function eventos() {
   document
     .querySelector("#btnInformar")
     .addEventListener("click", obtenerAlimentos);
-
-  document.querySelector("#btnMapa").addEventListener("click", armarMapa);
   document
     .querySelector("#searchButton")
     .addEventListener("click", paisesConMasUsuarios);
@@ -107,6 +106,7 @@ function ocultarBotones() {
 function chequearSession() {
   if (localStorage.getItem("user") != null) {
     MostrarMenuActivo();
+    getMiPosicion();
   } else {
     MostrarMenu();
   }
@@ -294,7 +294,6 @@ function obtenerAlimentos() {
             selectAlimento.appendChild(option);
           });
           listaAlimentos = respuesta.alimentos;
-          console.log(listaAlimentos);
         } else {
           console.error("Error al obtener los alimentos");
         }
@@ -531,37 +530,42 @@ function calcularCalorias() {
   document.getElementById("caloriasDiarias").style.color = colorTexto;
 }
 
-function armarMapa(latitud, longitud) {
-  if (map) {
-    map.remove();
+function armarMapa() {
+  if (!mapaInicializado) {
+    function miUbicacion(position) {
+      miLatitud = position.coords.latitude;
+      miLongitud = position.coords.longitude;
+
+      if (map) {
+        map.remove();
+      }
+
+      map = L.map("map").setView([miLatitud, miLongitud], 16);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+
+      L.marker([miLatitud, miLongitud])
+        .addTo(map)
+        .bindPopup("Usted está aquí.")
+        .openPopup();
+    }
+
+    function errorEnGeo(error) {
+      console.log("Error en la geolocalización:", error.message);
+    }
+
+    navigator.geolocation.getCurrentPosition(miUbicacion, errorEnGeo);
+
+    mapaInicializado = true;
   }
-
-  map = L.map("map").setView([latitud, longitud], 16);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map);
-
-  L.marker([latitud, longitud])
-    .addTo(map)
-    .bindPopup("Usted está aquí.")
-    .openPopup();
 }
 
 function getMiPosicion() {
   navigator.geolocation.getCurrentPosition(miUbicacion, errorEnGeo);
-}
-
-function miUbicacion(position) {
-  miLatitud = position.coords.latitude;
-  miLongitud = position.coords.longitude;
-  armarMapa(miLatitud, miLongitud);
-}
-
-function errorEnGeo(error) {
-  console.log("Error en la geolocalización:", error.message);
 }
 
 function usuariosPorPais() {
@@ -586,7 +590,6 @@ function usuariosPorPais() {
     })
     .then(function (data) {
       arrayUsuariosPorPais = data.paises;
-      console.log(arrayUsuariosPorPais);
     })
     .catch(function (error) {
       console.error("Error al obtener los datos:", error);
@@ -599,12 +602,13 @@ function paisesConMasUsuarios() {
   );
   console.log("Cantidad de usuarios ingresada:", cantidadUsuarios);
 
-  if (isNaN(cantidadUsuarios)) {
-    alert("Por favor, ingrese un número válido de usuarios.");
+  if (isNaN(cantidadUsuarios) || cantidadUsuarios < 0) {
+    document.getElementById("mensajeErrorMapa").innerText =
+      "Debes ingresar un valor válido";
     return;
+  } else {
+    document.getElementById("mensajeErrorMapa").innerText = ""; // Borra el mensaje de error
   }
-
-  console.log("Array de usuarios por país:", arrayUsuariosPorPais);
 
   arrayUsuariosPorPais.forEach(function (paisUsuario) {
     if (paisUsuario.cantidadDeUsuarios > cantidadUsuarios) {
@@ -617,6 +621,7 @@ function paisesConMasUsuarios() {
 }
 
 function agregarMarcador(pais) {
+  console.log("Pais recibido:", pais);
   L.marker([pais.latitude, pais.longitude])
     .addTo(map)
     .bindPopup(
