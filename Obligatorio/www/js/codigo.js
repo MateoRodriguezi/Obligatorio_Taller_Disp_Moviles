@@ -38,6 +38,7 @@ function inicio() {
   obtenerAlimentos();
   usuariosPorPais();
   armarMapa();
+  mostrarRegistros();
 }
 
 function eventos() {

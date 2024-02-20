@@ -203,6 +203,11 @@
                     <ion-input type="date" name="fecha" id="txtFechaAlimento" min="1990-01-01"
                         max="{{ getToday() | date: 'yyyy-MM-dd' }}" display-format="DD/MM/YYYY" required></ion-input>
                 </ion-item>
+                <script>
+                    var inputFechaAlimento = document.getElementById('txtFechaAlimento');
+                    var fechaActual = new Date().toISOString().split('T')[0];
+                    inputFechaAlimento.max = fechaActual;
+                </script>
                 <ion-button expand="block" id="btnRegistrarAlimento">Registrar Alimento</ion-button>
                 <p id="mensajeRegistroAlimentoExitoso" style="color: green;"></p>
                 <p id="mensajeErrorAlimentoRegistro" style="color: red;"></p>
